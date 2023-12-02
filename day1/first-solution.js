@@ -1,7 +1,7 @@
 const fs = require('fs')
 
 function firstSolution() {
-  const lines = fs.readFileSync('first-input.txt', 'utf8').split('\n');
+  const lines = fs.readFileSync('input1.txt', 'utf8').split('\n');
   let sum = 0;
 
   for (const line of lines) {
@@ -24,7 +24,7 @@ console.log(firstSolution());
 
 /*
   function firstSolution() {
-    const lines = fs.readFileSync('first-input.txt', 'utf8').split('\n');
+    const lines = fs.readFileSync('input1.txt', 'utf8').split('\n');
     let sum = 0;
 
     for (const line of lines) {
