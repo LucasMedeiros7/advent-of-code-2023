@@ -1,6 +1,5 @@
 const fs = require('fs')
 
-
 function extractGameId(game) {
   return Number(game.split(' ')[1])
 }
@@ -10,8 +9,8 @@ function parseSets(sets) {
     const cubes = set.split(',')
 
     return cubes.map(cube => {
-      const [_, key, color] = cube.split(' ')
-      return { [key]: color }
+      const [amount, color] = cube.trim().split(' ')
+      return { [amount]: color }
     })
   })
 }
@@ -34,8 +33,8 @@ function isValidSet(set) {
     blue: 14
   }
   return set.every((cube) => {
-    const [key, color] = Object.entries(cube)[0]
-    return MAX_VALUES[color] >= key
+    const [amount, color] = Object.entries(cube)[0]
+    return MAX_VALUES[color] >= amount
   })
 }
 
