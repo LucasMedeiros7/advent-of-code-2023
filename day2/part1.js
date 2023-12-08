@@ -27,31 +27,26 @@ function parseLines(lines) {
   })
 }
 
-function isValidSet(sets) {
+function isValidSet(set) {
   const MAX_VALUES = {
     red: 12,
     green: 13,
     blue: 14
   }
-
-  return sets.every(set => {
-    return set.every((cube) => {
-      const [key, color] = Object.entries(cube)[0]
-      return MAX_VALUES[color] >= key
-    })
+  return set.every((cube) => {
+    const [key, color] = Object.entries(cube)[0]
+    return MAX_VALUES[color] >= key
   })
 }
 
+function isValidGame(game) {
+  return game.sets.every(isValidSet)
+}
+
 function main(lines) {
-  const parsed = parseLines(lines);
-  const possiblesGames = new Set()
-
-  for (const game of parsed) {
-    possiblesGames.add(game.gameId)
-    if (!isValidSet(game.sets)) possiblesGames.delete(game.gameId)
-  }
-
-  return [...possiblesGames].reduce((a, b) => a + b, 0)
+  return parseLines(lines)
+    .filter(game => isValidGame(game))
+    .reduce((acc, current) => acc + current.gameId, 0)
 }
 
 const lines = fs.readFileSync('input1.txt', 'utf8').split('\n');
