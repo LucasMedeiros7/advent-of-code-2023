@@ -1,36 +1,58 @@
 const fs = require('fs')
 
-const MAX_VALUES = {
-  red: 12,
-  green: 13,
-  blue: 14
+
+function extractGameId(game) {
+  return Number(game.split(' ')[1])
 }
 
-function solution() {
-  const lines = fs.readFileSync('input1.txt', 'utf8').split('\n');
-  const possiblesGames = new Set()
+function parseSets(sets) {
+  return sets.split(';').map(set => {
+    const cubes = set.split(',')
 
-  for (let line of lines) {
-    let [game, sets] = line.split(':')
-    sets = sets.split(';')
+    return cubes.map(cube => {
+      const [_, key, color] = cube.split(' ')
+      return { [key]: color }
+    })
+  })
+}
 
-    let NUMBER_OF_GAME = Number(game.split(' ')[1])
-    possiblesGames.add(NUMBER_OF_GAME)
+function parseLines(lines) {
+  return lines.map((line) => {
+    const [game, sets] = line.split(':')
 
-    for (let i = 0; i < sets.length; i++) {
-      let cubes = sets[i].split(',')
-
-      for (let i = 0; i < cubes.length; i++) {
-        let [, qnt, cube] = cubes[i].split(' ')
-        if (Number(qnt) > MAX_VALUES[cube]) {
-          possiblesGames.delete(NUMBER_OF_GAME)
-          break
-        }
-      }
+    return {
+      gameId: extractGameId(game),
+      sets: parseSets(sets)
     }
+  })
+}
+
+function isValidSet(sets) {
+  const MAX_VALUES = {
+    red: 12,
+    green: 13,
+    blue: 14
   }
 
-  return Array.from(possiblesGames).reduce((a,b) => Number(a) + Number(b), 0)
+  return sets.every(set => {
+    return set.every((cube) => {
+      const [key, color] = Object.entries(cube)[0]
+      return MAX_VALUES[color] >= key
+    })
+  })
 }
 
-console.log(solution())
+function main(lines) {
+  const parsed = parseLines(lines);
+  const possiblesGames = new Set()
+
+  for (const game of parsed) {
+    possiblesGames.add(game.gameId)
+    if (!isValidSet(game.sets)) possiblesGames.delete(game.gameId)
+  }
+
+  return [...possiblesGames].reduce((a, b) => a + b, 0)
+}
+
+const lines = fs.readFileSync('input1.txt', 'utf8').split('\n');
+console.log(main(lines))
